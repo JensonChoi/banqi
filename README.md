@@ -21,6 +21,20 @@ npm run build
 
 The production site is generated in `dist/`; serve that directory using any static HTTP server. Do not open `index.html` directly with `file://`: module scripts and AI workers require HTTP(S). The relative Vite base supports hosting under a subdirectory.
 
+## CI/CD and GitHub Pages
+
+`.github/workflows/pages.yml` runs on every branch push, pull requests targeting `main`, and manual dispatches. It installs locked dependencies with `npm ci`, checks TypeScript, runs tests, and builds using Node.js 24. Only successful pushes or manual runs on `main` upload `dist/` and deploy it to GitHub Pages. Feature branches and pull requests run checks without deploying.
+
+One-time setup:
+
+1. Open the repository’s **Settings → Pages** and select **GitHub Actions** under **Build and deployment → Source**.
+2. Merge the workflow into `main` and push. Alternatively, select **Actions → CI and GitHub Pages → Run workflow**, choosing `main`.
+3. Find the published URL in the deployment job’s `github-pages` environment. For this repository, the default URL is `https://jensonchoi.github.io/banqi/`.
+
+The workflow uses GitHub’s built-in token; no personal access token or deployment secret is needed. Keep the `github-pages` environment’s deployment branches restricted to `main`. GitHub Pages availability depends on repository visibility and your GitHub plan; private repositories require a supported paid plan. See [GitHub’s custom workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+Vite’s relative `base: './'` keeps script, stylesheet, and AI worker URLs compatible with `/banqi/` and custom domains. To roll back, revert the unwanted change on `main`; the next successful workflow redeploys it. Configure branch protection to require **Test and build** before merging if checks should be mandatory.
+
 ## Playing
 
 - Click/tap any hidden piece to reveal it. This consumes your turn.
